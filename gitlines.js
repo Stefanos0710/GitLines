@@ -1,4 +1,7 @@
 const container = document.querySelector('.BorderGrid.about-margin');
+let got_line = 0;
+let data = [];
+const GITHUB_TOKEN = "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";
 
 if (container) {
     const newDiv = document.createElement('div');
@@ -7,7 +10,13 @@ if (container) {
     async function getBranches(repo_owner, repo_name) {
         // This func gives all branches in the repo
         const url = `https://api.github.com/repos/${repo_owner}/${repo_name}/branches`;
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                "Authorization": `token ${GITHUB_TOKEN}`,
+                "Accept": "application/vnd.github+json"
+            }
+        });
+
         if (!response.ok) {
             throw new Error("Failed to get branches");
         }
@@ -22,6 +31,30 @@ if (container) {
         const repo_owner = repo_parts[3];
         const repo_name = repo_parts[4];
 
+
+        if (got_line === 0) {
+            data = [
+                { lang: "Loading...", color: "#3572A5", lines: 123, link: "/CodeProTech/DropSend/" },
+                { lang: "Loading...", color: "#f1e05a", lines: 123, link: "/CodeProTech/DropSend/" },
+                { lang: "Loading...", color: "#e34c26", lines: 123, link: "/CodeProTech/DropSend/" },
+                { lang: "Loading...", color: "#563d7c", lines: 123, link: "/CodeProTech/DropSend/" }
+            ];
+        }
+
+        // supportet languages with full name and color
+        // --- Check if colors match to github colors ---
+        const languageMap = {
+            ".py":   { lang: "Python", color: "#3572A5" },
+            ".js":   { lang: "JavaScript", color: "#f1e05a" },
+            ".html": { lang: "HTML", color: "#e34c26" },
+            ".css":  { lang: "CSS", color: "#563d7c" },
+            ".java": { lang: "Java", color: "#b07219" },
+            ".cpp":  { lang: "C++", color: "#f34b7d" },
+            ".c":    { lang: "C", color: "#555555" },
+            ".ts":   { lang: "TypeScript", color: "#2b7489" },
+            ".cs":   { lang: "C#", color: "#178600" }
+        }
+
         // get branches
         const branches = await getBranches(repo_owner, repo_name);
 
@@ -32,9 +65,15 @@ if (container) {
             // build repo tree
             const repo_tree_url = `https://api.github.com/repos/${repo_owner}/${repo_name}/git/trees/${branch}?recursive=1`;
             console.log(`Only one branch: ${branch}`);
+            console.log("repo_tree_url", repo_tree_url);
 
             // load repo tree
-            const response = await fetch(repo_tree_url);
+            const response = await fetch(repo_tree_url, {
+                headers: {
+                    "Authorization": `token ${GITHUB_TOKEN}`,
+                    "Accept": "application/vnd.github+json"
+                }
+            });
             if (!response.ok) {
                 throw new Error("Failed to get repo tree");
             }
@@ -42,39 +81,91 @@ if (container) {
 
             // number of files in repo
             console.log("Tree entries:", tree.tree.length);
-            num_files = tree.tree.length;
+            const num_files = tree.tree.length;
 
-            // check if it´s code or not
-            tree.tree.forEach((item, index) => {
-                // prints the index with the path (name) from the tree object
-                console.log(`Index ${index} ${item.path}`)
-                const path = item.path
 
-                if (path.endsWith('.py')) {
-                    console.log("It is py!")
+            function getLanguage(path) {
+                for (const ext in languageMap) {
+                    if (path.endsWith(ext)) {
+                        return languageMap[ext];
+                    }
                 }
-                if (path.endsWith('.html')) {
-                    console.log("It is html!")
+                console.log(`The file ${path} is not supportet!`)
+                return null;
+            }
+
+            // clear loading data
+            data = [];
+
+            // count lines for every code file
+            for (const [index, item] of tree.tree.entries()) {
+                if (item.type !== "blob") continue; // Skip if not a file
+
+                const path = item.path;
+                const fileExtension = path.slice(path.lastIndexOf('.'));
+
+                // Check if this is a supported file type
+                if (languageMap[fileExtension]) {
+                    console.log(`Processing file: ${path}`);
+
+                    const url_to_code = `https://api.github.com/repos/${repo_owner}/${repo_name}/contents/${path}?ref=${branch}`;
+                    const r = await fetch(url_to_code, {
+                        headers: {
+                            "Authorization": `token ${GITHUB_TOKEN}`,
+                            "Accept": "application/vnd.github+json"
+                        }
+                    });
+
+                    if (!r.ok) {
+                        console.error(`Failed to get content in ${path}`);
+                        continue;
+                    }
+
+                    try {
+                        const content_json = await r.json();
+                        const content_base64 = content_json.content;
+                        const content = atob(content_base64);
+                        const lines = content.split("\n").length;
+                        const link = `https://github.com/${repo_owner}/${repo_name}/blob/${branch}/${path}`;
+
+                        console.log(`Lines for ${path}: ${lines}`);
+
+                        // Get language info
+                        const { lang, color } = languageMap[fileExtension];
+
+                        // Check if language already exists in data
+                        const existingLangIndex = data.findIndex(item => item.lang === lang);
+
+                        if (existingLangIndex !== -1) {
+                            // Add lines to existing language entry
+                            data[existingLangIndex].lines += lines;
+                        } else {
+                            // Add new language entry
+                            data.push({ lang, color, lines, link });
+                        }
+                    } catch (e) {
+                        console.error(`Error processing file ${path}:`, e);
+                    }
                 }
-                if (path.endsWith('.js')) {
-                    console.log("It is js!")
-                }
-                if (path.endsWith('.css')) {
-                    console.log("It is css!")
-                }
-            });
+            }
+
+            // sort by numbers of lines of code
+            data.sort((a, b) => b.lines - a.lines);
+
+            // If no data was found, show error
+            if (data.length === 0) {
+                data = [
+                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
+                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
+                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
+                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" }
+                ];
+            }
+
         } else {
             // if there are more than one branches
             console.log(`There are ${branches.length} branches: ${branches.join(", ")}`);
         }
-
-        // Dummy-Daten (hier kannst du später echte Daten einfügen)
-        const data = [
-            { lang: "Python", color: "#3572A5", lines: 5300, link: "/CodeProTech/DropSend/search?l=python" },
-            { lang: "HTML", color: "#e34c26", lines: 2700, link: "/CodeProTech/DropSend/search?l=html" },
-            { lang: "CSS", color: "#563d7c", lines: 2400, link: "/CodeProTech/DropSend/search?l=css" },
-            { lang: "JavaScript", color: "#f1e05a", lines: 1600, link: "/CodeProTech/DropSend/search?l=javascript" }
-        ];
 
         const totalLines = data.reduce((sum, item) => sum + item.lines, 0);
 
@@ -251,6 +342,5 @@ if (container) {
             });
         });
     }
-
     init();
 }
