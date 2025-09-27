@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>GitLines Popup</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="header">
+    <h1>GitLines</h1>
+<!--    <button class="settings-btn" title="Settings">⚙️</button>-->
+</div>
+
+<div class="toggle-container">
+    <label for="status">Enable GitLines:</label>
+    <label class="toggle-switch">
+        <input type="checkbox" id="status" checked>
+        <span class="slider"></span>
+    </label>
+</div>
+
+<div class="input-group">
+    <label for="apikey">GitHub API Key:</label>
+    <input type="text" id="apikey" placeholder="Enter your GitHub API key...">
+
+</div>
+<div>
+    <button class="help-btn" id="save">Save</button>
+    <button class="help-btn" id="helpBtn">Help</button>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

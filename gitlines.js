@@ -1,14 +1,50 @@
+
+// api key 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
+
 const container = document.querySelector('.BorderGrid.about-margin');
 let got_line = 0;
 let data = [];
-const GITHUB_TOKEN = "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";
+let GITHUB_TOKEN = null;
+
+// get github api key from browser storage
+async function getApiKey() {
+    try {
+        const result = await browser.storage.local.get(['apiKey']);
+        if (result.apiKey) {
+            // save api key in GITHUB_TOKEN
+            GITHUB_TOKEN = result.apiKey;
+            console.error(GITHUB_TOKEN);
+            return true;
+        } else {
+            // error handling
+            console.error("No API Key found. Add api key in popup!");
+
+            // display an error message in Github
+            displayErrorMessage(
+                "GitHub API Key Required",
+                "This extension needs a GitHub API key to count lines of code in this repository.",
+                [
+                    "Click the extension icon in your browser toolbar",
+                    "Enter your GitHub personal access token in the popup",
+                    "Make sure your token has the 'repo' scope permissions",
+                    "Click 'Save' to store your API key"
+                ],
+                "https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token"
+            );
+            return false;
+        }
+    } catch (err) {
+        console.error("Error getting API key:", err);
+        return false;
+    }
+}
 
 if (container) {
     const newDiv = document.createElement('div');
     newDiv.classList.add('BorderGrid-row');
 
     async function getBranches(repo_owner, repo_name) {
-        // This func gives all branches in the repo
+        // gives all branches in the repo
         const url = `https://api.github.com/repos/${repo_owner}/${repo_name}/branches`;
         const response = await fetch(url, {
             headers: {
@@ -25,6 +61,10 @@ if (container) {
     }
 
     async function init() {
+        // get API key before proceeding
+        const hasApiKey = await getApiKey();
+        if (!hasApiKey) return;
+
         // extract repo name and owner from repo-link
         const repo_url = window.location.href;
         const repo_parts = repo_url.split('/');
@@ -51,120 +91,165 @@ if (container) {
             ".java": { lang: "Java", color: "#b07219" },
             ".cpp":  { lang: "C++", color: "#f34b7d" },
             ".c":    { lang: "C", color: "#555555" },
-            ".ts":   { lang: "TypeScript", color: "#2b7489" },
-            ".cs":   { lang: "C#", color: "#178600" }
-        }
+            ".h":    { lang: "C Header", color: "#555555" },
+            ".ts":   { lang: "TypeScript", color: "#3178c6" },
+            ".cs":   { lang: "C#", color: "#178600" },
+            ".php":  { lang: "PHP", color: "#4F5D95" },
+            ".rb":   { lang: "Ruby", color: "#701516" },
+            ".go":   { lang: "Go", color: "#00ADD8" },
+            ".rs":   { lang: "Rust", color: "#dea584" },
+            ".swift":{ lang: "Swift", color: "#F05138" },
+            ".kt":   { lang: "Kotlin", color: "#A97BFF" },
+            ".r":    { lang: "R", color: "#198CE7" },
+            ".pl":   { lang: "Perl", color: "#0298c3" },
+            ".sh":   { lang: "Shell", color: "#89e051" },
+            ".bat":  { lang: "Batchfile", color: "#C1F12E" },
+            ".ps1":  { lang: "PowerShell", color: "#012456" },
+            ".lua":  { lang: "Lua", color: "#000080" },
+            ".hs":   { lang: "Haskell", color: "#5e5086" },
+            ".scala":{ lang: "Scala", color: "#c22d40" },
+            ".dart": { lang: "Dart", color: "#00B4AB" },
+            ".m":    { lang: "Objective-C", color: "#438eff" },
+            ".mm":   { lang: "Objective-C++", color: "#6866fb" },
+            ".matlab": { lang: "MATLAB", color: "#e16737" },
+            ".jl":   { lang: "Julia", color: "#a270ba" },
+            ".sql":  { lang: "SQL", color: "#e38c00" },
+            ".yaml": { lang: "YAML", color: "#cb171e" },
+            ".yml":  { lang: "YAML", color: "#cb171e" },
+            ".json": { lang: "JSON", color: "#292929" },
+            ".xml":  { lang: "XML", color: "#0060ac" },
+//            ".md":   { lang: "Markdown", color: "#083fa1" },
+            ".tex":  { lang: "TeX", color: "#3D6117" },
+            ".ipynb":{ lang: "Jupyter Notebook", color: "#DA5B0B" },
+            ".dockerfile": { lang: "Dockerfile", color: "#384d54" },
+            ".makefile":   { lang: "Makefile", color: "#427819" },
+            ".gradle": { lang: "Gradle", color: "#02303a" },
+            ".vb":   { lang: "Visual Basic", color: "#945db7" },
+            ".groovy": { lang: "Groovy", color: "#4298b8" },
+            ".erl":  { lang: "Erlang", color: "#B83998" },
+            ".ex":   { lang: "Elixir", color: "#6e4a7e" },
+            ".clj":  { lang: "Clojure", color: "#db5855" },
+            ".coffee": { lang: "CoffeeScript", color: "#244776" },
+            ".f90":  { lang: "Fortran", color: "#4d41b1" }
+        };
 
-        // get branches
-        const branches = await getBranches(repo_owner, repo_name);
+        try {
+            // get branches
+            const branches = await getBranches(repo_owner, repo_name);
 
-        // if there is 1 branch
-        if (branches.length === 1) {
-            const branch = branches[0];
+            // if there is 1 branch
+            if (branches.length === 1) {
+                const branch = branches[0];
 
-            // build repo tree
-            const repo_tree_url = `https://api.github.com/repos/${repo_owner}/${repo_name}/git/trees/${branch}?recursive=1`;
-            console.log(`Only one branch: ${branch}`);
-            console.log("repo_tree_url", repo_tree_url);
+                // build repo tree
+                const repo_tree_url = `https://api.github.com/repos/${repo_owner}/${repo_name}/git/trees/${branch}?recursive=1`;
+                console.log(`Only one branch: ${branch}`);
+                console.log("repo_tree_url", repo_tree_url);
 
-            // load repo tree
-            const response = await fetch(repo_tree_url, {
-                headers: {
-                    "Authorization": `token ${GITHUB_TOKEN}`,
-                    "Accept": "application/vnd.github+json"
-                }
-            });
-            if (!response.ok) {
-                throw new Error("Failed to get repo tree");
-            }
-            const tree = await response.json();
-
-            // number of files in repo
-            console.log("Tree entries:", tree.tree.length);
-            const num_files = tree.tree.length;
-
-
-            function getLanguage(path) {
-                for (const ext in languageMap) {
-                    if (path.endsWith(ext)) {
-                        return languageMap[ext];
+                // load repo tree
+                const response = await fetch(repo_tree_url, {
+                    headers: {
+                        "Authorization": `token ${GITHUB_TOKEN}`,
+                        "Accept": "application/vnd.github+json"
                     }
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to get repo tree");
                 }
-                console.log(`The file ${path} is not supportet!`)
-                return null;
-            }
+                const tree = await response.json();
 
-            // clear loading data
-            data = [];
+                // number of files in repo
+                console.log("Tree entries:", tree.tree.length);
+                const num_files = tree.tree.length;
 
-            // count lines for every code file
-            for (const [index, item] of tree.tree.entries()) {
-                if (item.type !== "blob") continue; // Skip if not a file
 
-                const path = item.path;
-                const fileExtension = path.slice(path.lastIndexOf('.'));
-
-                // Check if this is a supported file type
-                if (languageMap[fileExtension]) {
-                    console.log(`Processing file: ${path}`);
-
-                    const url_to_code = `https://api.github.com/repos/${repo_owner}/${repo_name}/contents/${path}?ref=${branch}`;
-                    const r = await fetch(url_to_code, {
-                        headers: {
-                            "Authorization": `token ${GITHUB_TOKEN}`,
-                            "Accept": "application/vnd.github+json"
+                function getLanguage(path) {
+                    for (const ext in languageMap) {
+                        if (path.endsWith(ext)) {
+                            return languageMap[ext];
                         }
-                    });
-
-                    if (!r.ok) {
-                        console.error(`Failed to get content in ${path}`);
-                        continue;
                     }
+                    console.log(`The file ${path} is not supportet!`)
+                    return null;
+                }
 
-                    try {
-                        const content_json = await r.json();
-                        const content_base64 = content_json.content;
-                        const content = atob(content_base64);
-                        const lines = content.split("\n").length;
-                        const link = `https://github.com/${repo_owner}/${repo_name}/blob/${branch}/${path}`;
+                // clear loading data
+                data = [];
 
-                        console.log(`Lines for ${path}: ${lines}`);
+                // count lines for every code file
+                for (const [index, item] of tree.tree.entries()) {
+                    if (item.type !== "blob") continue; // Skip if not a file
 
-                        // Get language info
-                        const { lang, color } = languageMap[fileExtension];
+                    const path = item.path;
+                    const fileExtension = path.slice(path.lastIndexOf('.'));
 
-                        // Check if language already exists in data
-                        const existingLangIndex = data.findIndex(item => item.lang === lang);
+                    // Check if this is a supported file type
+                    if (languageMap[fileExtension]) {
+                        console.log(`Processing file: ${path}`);
 
-                        if (existingLangIndex !== -1) {
-                            // Add lines to existing language entry
-                            data[existingLangIndex].lines += lines;
-                        } else {
-                            // Add new language entry
-                            data.push({ lang, color, lines, link });
+                        const url_to_code = `https://api.github.com/repos/${repo_owner}/${repo_name}/contents/${path}?ref=${branch}`;
+                        const r = await fetch(url_to_code, {
+                            headers: {
+                                "Authorization": `token ${GITHUB_TOKEN}`,
+                                "Accept": "application/vnd.github+json"
+                            }
+                        });
+
+                        if (!r.ok) {
+                            console.error(`Failed to get content in ${path}`);
+                            continue;
                         }
-                    } catch (e) {
-                        console.error(`Error processing file ${path}:`, e);
+
+                        try {
+                            const content_json = await r.json();
+                            const content_base64 = content_json.content;
+                            const content = atob(content_base64);
+                            const lines = content.split("\n").length;
+                            const link = `https://github.com/${repo_owner}/${repo_name}/blob/${branch}/${path}`;
+
+                            console.log(`Lines for ${path}: ${lines}`);
+
+                            // Get language info
+                            const { lang, color } = languageMap[fileExtension];
+
+                            // Check if language already exists in data
+                            const existingLangIndex = data.findIndex(item => item.lang === lang);
+
+                            if (existingLangIndex !== -1) {
+                                // Add lines to existing language entry
+                                data[existingLangIndex].lines += lines;
+                            } else {
+                                // Add new language entry
+                                data.push({ lang, color, lines, link });
+                            }
+                        } catch (e) {
+                            console.error(`Error processing file ${path}:`, e);
+                        }
                     }
                 }
+
+                // sort by numbers of lines of code
+                data.sort((a, b) => b.lines - a.lines);
+
+                // If no data was found, show error
+                if (data.length === 0) {
+                    data = [
+                        { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
+                        { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
+                        { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
+                        { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" }
+                    ];
+                }
+
+            } else {
+                // if there are more than one branches
+                console.log(`There are ${branches.length} branches: ${branches.join(", ")}`);
             }
-
-            // sort by numbers of lines of code
-            data.sort((a, b) => b.lines - a.lines);
-
-            // If no data was found, show error
-            if (data.length === 0) {
-                data = [
-                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
-                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
-                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" },
-                    { lang: "ERROR_404", color: "#67ff00", lines: 123, link: "/CodeProTech/DropSend/" }
-                ];
-            }
-
-        } else {
-            // if there are more than one branches
-            console.log(`There are ${branches.length} branches: ${branches.join(", ")}`);
+        } catch (err) {
+            console.error("Error analyzing repository:", err);
+            data = [
+                { lang: "ERROR", color: "#ff0000", lines: 0, link: "#" },
+            ];
         }
 
         const totalLines = data.reduce((sum, item) => sum + item.lines, 0);
