@@ -1,6 +1,6 @@
 body {
-    width: 280px;
-    min-height: 220px;
+    width: 300px;
+    min-height: 280px;
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     padding: 16px;
@@ -18,25 +18,10 @@ body {
 }
 
 .header h1 {
-    font-size: 20px;
+    font-size: 22px;
     margin: 0;
     color: #000000;
     font-weight: 600;
-}
-
-.settings-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 18px;
-    color: #333;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.settings-btn:hover {
-    background-color: #f0f0f0;
 }
 
 .input-group {
@@ -53,9 +38,9 @@ label {
 
 input[type="text"] {
     width: 100%;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border: 1px solid #d0d0d0;
-    border-radius: 4px;
+    border-radius: 6px;
     font-size: 14px;
     box-sizing: border-box;
     transition: border-color 0.2s;
@@ -123,39 +108,107 @@ input:checked + .slider:before {
     transform: translateX(22px);
 }
 
-.help-btn {
-    padding: 8px 14px;
-    border: 1px solid #333;
-    border-radius: 4px;
-    background: #fff;
-    color: #333;
+/* Range slider styles */
+.range-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.slider-range {
+    flex-grow: 1;
+    height: 6px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    -webkit-appearance: none;
+    margin-right: 10px;
+}
+
+.slider-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #333;
     cursor: pointer;
+}
+
+.slider-range::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    border: none;
+}
+
+#concurrentValue {
+    font-weight: bold;
+    min-width: 20px;
+    text-align: center;
+}
+
+.hint-text {
+    margin: 0;
+    font-size: 12px;
+    color: #777;
+    font-style: italic;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.primary-btn, .secondary-btn {
+    padding: 10px 16px;
+    border-radius: 6px;
     font-size: 14px;
-    transition: all 0.2s;
-}
-
-.help-btn:hover {
-    background: #f0f0f0;
-}
-
-.help-text {
-    display: none;
-    margin-top: 12px;
-    font-size: 13px;
-    color: #505050;
-    background: #f8f8f8;
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #e0e0e0;
-    line-height: 1.4;
-}
-
-.help-text a {
-    color: #333;
-    text-decoration: none;
     font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    flex: 1;
+    text-align: center;
 }
 
-.help-text a:hover {
-    text-decoration: underline;
+.primary-btn {
+    background-color: #333;
+    color: white;
+    border: 1px solid #333;
+}
+
+.primary-btn:hover {
+    background-color: #444;
+}
+
+.secondary-btn {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #333;
+}
+
+.secondary-btn:hover {
+    background-color: #f0f0f0;
+}
+
+.status-message {
+    padding: 8px 12px;
+    margin-top: 12px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.status-success {
+    background-color: #e7f7e7;
+    color: #2c662d;
+}
+
+.status-error {
+    background-color: #fde7e9;
+    color: #a51c30;
 }

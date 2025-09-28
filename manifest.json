@@ -4,7 +4,7 @@
   "version": "1.0",
   "description": "Displays the lines of code of a Github repo.",
   "icons": {
-    "48": "icons/icon_1.png"
+    "256": "icons/icon_3.png"
   },
   "permissions": [
     "https://api.github.com/",
@@ -13,7 +13,7 @@
   ],
   "browser_action": {
     "default_icon": {
-      "48": "icons/icon_1.png"
+      "256": "icons/icon_3.png"
     },
     "default_popup": "popup/popup.html",
     "default_title": "GitLines"

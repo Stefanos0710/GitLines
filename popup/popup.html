@@ -8,7 +8,6 @@
 <body>
 <div class="header">
     <h1>GitLines</h1>
-<!--    <button class="settings-btn" title="Settings">⚙️</button>-->
 </div>
 
 <div class="toggle-container">
@@ -22,11 +21,26 @@
 <div class="input-group">
     <label for="apikey">GitHub API Key:</label>
     <input type="text" id="apikey" placeholder="Enter your GitHub API key...">
-
 </div>
-<div>
-    <button class="help-btn" id="save">Save</button>
-    <button class="help-btn" id="helpBtn">Help</button>
+
+<div class="input-group">
+    <label for="concurrentFiles">Concurrent Files:</label>
+    <div class="range-container">
+        <input type="range" id="concurrentFiles" min="1" max="20" value="5" class="slider-range">
+        <span id="concurrentValue">5</span>
+    </div>
+    <p class="hint-text">Recommended: 3-10 files</p>
+</div>
+
+<div class="input-group">
+    <label for="branchSelection">Branch Selection:</label>
+    <input type="text" id="branchSelection" placeholder="main (or 'all' for all branches)" value="main">
+    <p class="hint-text">Enter specific branch name (e.g. "main", "develop") or "all" to analyze all branches</p>
+</div>
+
+<div class="button-container">
+    <button class="primary-btn" id="save">Save</button>
+    <button class="secondary-btn" id="helpBtn">Help</button>
 </div>
 
 <script src="popup.js"></script>

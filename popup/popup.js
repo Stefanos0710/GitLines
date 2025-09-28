@@ -3,8 +3,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const saveButton = document.getElementById("save");
     const statusToggle = document.getElementById("status");
     const helpButton = document.getElementById("helpBtn");
+    const concurrentFilesSlider = document.getElementById("concurrentFiles");
+    const concurrentValue = document.getElementById("concurrentValue");
+    const branchSelectionInput = document.getElementById("branchSelection");
 
-    // Correct way to access storage API in Firefox extensions
+    // get accses to local storage
     const storage = typeof browser !== "undefined" ? browser.storage : chrome.storage;
 
     if (!storage) {
@@ -12,45 +15,59 @@ document.addEventListener("DOMContentLoaded", function() {
         return;
     }
 
-    storage.local.get(['apiKey'], (result) => {
+    // load saved settings
+    storage.local.get(['apiKey', 'enabled', 'concurrentFiles', 'branchSelection'], (result) => {
         if (result.apiKey) {
             apiKeyInput.value = result.apiKey;
         }
+
+        // Extension is enabled by default if no setting exists
+        if (result.enabled !== undefined) {
+            statusToggle.checked = result.enabled;
+        } else {
+            statusToggle.checked = true; // Default to enabled
+        }
+
+        if (result.concurrentFiles) {
+            concurrentFilesSlider.value = result.concurrentFiles;
+            concurrentValue.textContent = result.concurrentFiles;
+        }
+
+        if (result.branchSelection) {
+            branchSelectionInput.value = result.branchSelection;
+        }
+    });
+
+    // update displayed value for slider
+    concurrentFilesSlider.addEventListener("input", () => {
+        concurrentValue.textContent = concurrentFilesSlider.value;
     });
 
     saveButton.addEventListener("click", () => {
         const apiKey = apiKeyInput.value.trim();
         if (!apiKey) {
-            alert("Enter a valid GitHub API key!");
+            showStatus("Enter a valid GitHub API key!", "error");
             return;
         }
 
-        storage.local.set({ apiKey }, () => {
-            const status = document.createElement("div");
-            status.textContent = "API Key saved successfully!";
-            status.style.color = "green";
-            status.style.marginTop = "10px";
-            document.body.appendChild(status);
+        const concurrentFiles = parseInt(concurrentFilesSlider.value);
+        const branchSelection = branchSelectionInput.value.trim() || "main";
 
-            setTimeout(() => {
-                status.remove();
-            }, 3000);
+        storage.local.set({
+            apiKey,
+            concurrentFiles,
+            branchSelection,
+            enabled: statusToggle.checked
+        }, () => {
+            showStatus("Settings saved successfully!", "success");
         });
     });
 
-    // Handle toggle switch
+    // handle toggle switch
     statusToggle.addEventListener("change", () => {
         const enabled = statusToggle.checked;
         storage.local.set({ enabled }, () => {
-            const status = document.createElement("div");
-            status.textContent = enabled ? "Extension enabled" : "Extension disabled";
-            status.style.color = enabled ? "green" : "red";
-            status.style.marginTop = "10px";
-            document.body.appendChild(status);
-
-            setTimeout(() => {
-                status.remove();
-            }, 1500);
+            showStatus(enabled ? "Extension enabled" : "Extension disabled", enabled ? "success" : "error");
         });
     });
 
@@ -72,4 +89,22 @@ document.addEventListener("DOMContentLoaded", function() {
             window.open("https://github.com/Stefanos0710/GitLines/blob/main/README.md", "_blank");
         }
     });
+
+    // helper function to show status messages
+    function showStatus(message, type) {
+        // remove current message
+        const existingStatus = document.querySelector(".status-message");
+        if (existingStatus) {
+            existingStatus.remove();
+        }
+
+        const status = document.createElement("div");
+        status.textContent = message;
+        status.className = `status-message status-${type}`;
+        document.body.appendChild(status);
+
+        setTimeout(() => {
+            status.remove();
+        }, 3000);
+    }
 });
