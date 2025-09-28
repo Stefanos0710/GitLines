@@ -1,153 +1,153 @@
 # GitLines
-A simple Firefox extension that displays the total lines of code in any GitHub repository directly on the repository page.
 
-> **Note:** This extension will be available on the Firefox Add-ons Store soon and is currently under review. For now, please follow the manual installation steps below.
+<div align="center">
+  <img src="icons/icon_3.png" alt="GitLines Logo" width="120">
+  <h3>Code Statistics for GitHub</h3>
+  <p>A browser extension that displays detailed lines of code statistics for any GitHub repository</p>
+</div>
 
-## 📋 System Requirements
-- Firefox 109 or higher
-- Internet connection for GitHub access
-- GitHub Personal Access Token (required)
+## 🔍 Overview
 
-## 🚀 Step-by-Step Setup Guide
+GitLines seamlessly integrates with GitHub's interface to provide instant code statistics directly on repository pages. With a sleek, interactive visualization, you can quickly see:
 
-### Step 1: Install the Extension
-1. **Download the repository:**
+- Total lines of code in the repository
+- Breakdown by programming language
+- Visual distribution with an interactive donut chart
+- Direct links to explore specific file types
+
+<img width="417" height="254" alt="grafik" src="https://github.com/user-attachments/assets/714a4b97-58ec-4f5a-9bc1-5b0c6d65aa82" />
+
+
+## ✨ Features
+
+- **Real-time Analysis**: Instantly analyze repositories as you browse GitHub
+- **Language Breakdown**: See code distribution across different programming languages
+- **Interactive Chart**: Hover over segments to see detailed statistics
+- **Branch Selection**: Analyze specific branches or all branches
+- **Configurable Performance**: Adjust concurrent file processing for optimal speed
+- **GitHub API Integration**: Uses official GitHub API for accurate results
+- **Wide Language Support**: Detects over 30 programming languages
+
+## 🛠️ Installation
+
+### Firefox
+
+> **Note:** GitLines will be available on the Firefox Add-ons Store soon. For now, please follow the manual installation steps below.
+
+#### Manual Installation
+1. Download the repository:
    ```bash
-   git clone https://github.com/[username]/GitLines.git
+   git clone https://github.com/Stefanos0710/GitLines.git
    ```
-   or download the ZIP file and extract it.
+   or download the ZIP file and extract it
 
-2. **Install Firefox Developer Edition (recommended):**
-   - Download Firefox
+2. Open Firefox and navigate to `about:debugging`
+3. Click "This Firefox"
+4. Click "Load Temporary Add-on..."
+5. Navigate to the GitLines folder and select `manifest.json`
+6. The extension should now be installed and visible in your toolbar
 
-3. **Load the extension:**
-   - Open Firefox
-   - Navigate to `about:debugging` in the address bar
-   - Click on "This Firefox"
-   - Click "Load Temporary Add-on..."
-   - Navigate to the GitLines folder and select the `manifest.json` file
+## ⚙️ Setup
 
-### Step 2: Add Extension to Menu Bar
-1. **Pin the extension to toolbar:**
-   - Look for the GitLines icon in the Firefox toolbar
-   - If not visible, click the puzzle piece icon (Extensions) in the toolbar
-   - Find "GitLines" and click the pin icon to add it to your toolbar
-   - The GitLines icon should now be visible in your menu bar
+### 1. Generate GitHub API Token
 
-### Step 3: Get Your GitHub API Token
-1. **Sign in to GitHub:**
-   - Go to [github.com](https://github.com) and sign in to your account
+A personal access token is required to access GitHub's API:
 
-2. **Access Developer Settings:**
-   - Click on your profile picture (top right)
-   - Select "Settings"
-   - Scroll down and click "Developer settings" (left sidebar)
+1. Sign in to [GitHub](https://github.com)
+2. Click your profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
+3. Click **Generate new token** → **Generate new token (classic)**
+4. Give your token a descriptive name (e.g., "GitLines Extension")
+5. Set the expiration as desired
+6. Select the following permissions:
+   - `public_repo` - For public repositories
+   - `repo` - For private repositories (if needed)
+7. Click **Generate token**
+8. **IMPORTANT**: Copy the token immediately - you won't see it again!
 
-3. **Generate Personal Access Token:**
-   - Click "Personal access tokens" → "Tokens (classic)"
-   - Click "Generate new token" → "Generate new token (classic)"
-   - Give your token a descriptive name (e.g., "GitLines Extension")
+### 2. Configure the Extension
 
-4. **Configure Token Permissions:**
-   - **Expiration:** Set to "No expiration" or choose your preferred duration
-   - **Select scopes:** Check the following permissions:
-     - ✅ `public_repo` - Access public repositories
-     - ✅ `repo:status` - Access commit status
-     - ✅ `repo_deployment` - Access deployment status
-   
-   *Note: For private repositories, you'll need the full `repo` scope*
-
-5. **Copy the Token:**
-   - Click "Generate token"
-   - **Important:** Copy the token immediately - you won't be able to see it again!
-
-### Step 4: Configure Your API Token
-1. **Open GitLines Settings:**
-   - Click the GitLines icon in your Firefox toolbar
-   - The popup window will open
-   - Click on "Settings" or the gear icon
-
-2. **Enter Your Token:**
-   - Paste your GitHub Personal Access Token in the "API Token" field
-   - Click "Save" to store your configuration
+1. Click the GitLines icon in your browser toolbar
+2. Enter your GitHub API token
+3. Adjust settings as desired:
+   - **Concurrent Files**: Number of files to process simultaneously (3-10 recommended)
+   - **Branch Selection**: Specify which branch(es) to analyze
+4. Click **Save**
+<img width="366" height="497" alt="grafik" src="https://github.com/user-attachments/assets/d65a7c13-31fa-4054-bf3e-5d0763acce90" />
 
 
-**Important:** Make sure to save your settings after making any changes!
 
-## 🔧 Usage
+## 🚀 Usage
 
-Once everything is set up:
+1. **Visit any GitHub Repository**: 
+   - The extension will automatically detect GitHub repository pages
 
-1. **Visit any GitHub Repository:**
-   - Navigate to any GitHub repository
-   - The extension will automatically detect the page and start analyzing
+2. **View Statistics**:
+   - Look for the "Lines of Code" section in the repository sidebar
+   - See total lines and breakdown by language
+   - Interact with the chart for more details
 
-2. **View Code Lines:**
-   - Code line information will appear directly on the repository page
-   - Click the GitLines toolbar icon for detailed statistics
+3. **Customization**:
+   - Click the GitLines icon to adjust settings
+   - Modify concurrent processing for speed/resource balance
+   - Select specific branches to analyze
 
-3. **Detailed Information:**
-   - Use the popup to see breakdowns by programming language
-   - View total lines, code lines, comments, and blank lines
-
-## ⚙️ Features
-- Automatic GitHub repository detection
-- Real-time display of code lines
-- Support for various programming languages
-- User-friendly popup interface
-- Fast and efficient processing
-
-## 🛠️ Development
+## 🧩 Development
 
 ### Prerequisites
-- Firefox Developer Edition
 - Basic knowledge of JavaScript, HTML, and CSS
+- Firefox or Chrome for testing
 
-### Developer Setup
-1. Clone the repository
-2. Make changes to the files
-3. Reload in Firefox via `about:debugging`
-4. Test on various GitHub repositories
-
-### File Structure
+### Project Structure
 ```
 GitLines/
 ├── manifest.json          # Extension manifest
-├── gitlines.js           # Main JavaScript file
+├── gitlines.js           # Main content script
 ├── popup/
-│   ├── popup.html        # Popup HTML
-│   ├── popup.js          # Popup JavaScript
+│   ├── popup.html        # Popup interface
+│   ├── popup.js          # Popup functionality
 │   └── style.css         # Popup styling
 ├── icons/                # Extension icons
-└── README.md            # This file
+└── README.md            # Documentation
 ```
 
-## 🐛 Troubleshooting
+### Building and Testing
+1. Clone the repository
+2. Make your changes
+3. Test using Firefox's `about:debugging` page
+4. Load as a temporary add-on
 
-### Extension doesn't load
-- Check that all files are present
-- Ensure `manifest.json` is valid
-- Use Firefox Developer Edition for testing
+## ❓ Troubleshooting
 
-### Code lines not displaying
-- Refresh the GitHub page
-- Check browser console for error messages
-- Make sure JavaScript is enabled
+### Extension Not Working
+- Verify that the extension is enabled in the popup
+- Check that you've entered a valid GitHub API token
+- Ensure you have sufficient API rate limits remaining
 
-### Popup doesn't open
-- Check if the extension is enabled
-- Click directly on the GitLines icon
-- Reload the extension in `about:debugging`
+### Slow Performance
+- Decrease the "Concurrent Files" setting
+- Analyze specific branches instead of all branches
+- Check your network connection
+
+### API Limits
+- GitHub API has rate limits that may affect usage
+- Consider authenticating with a token that has higher rate limits
+- Wait for rate limits to reset if you've reached them
 
 ## 📄 License
-See [LICENSE](LICENSE) file for details.
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
+
+Contributions are welcome! To contribute:
 1. Fork the repository
 2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📞 Support
-For issues or questions, please create an issue on GitHub.
+
+If you encounter any issues or have questions:
+- Open an [issue](https://github.com/Stefanos0710/GitLines/issues) on GitHub
+- Provide details about your browser, OS, and the problem you're experiencing
