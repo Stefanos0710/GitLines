@@ -45,7 +45,9 @@ GitLines seamlessly integrates with GitHub's interface to provide instant code s
 3. Click "This Firefox"
 4. Click "Load Temporary Add-on..."
 5. Navigate to the GitLines folder and select `manifest.json`
-6. The extension should now be installed and visible in your toolbar
+6. Click the puzzle icon in the toolbar and then open the settings icon.
+7. Select Pin to Toolbar.
+8. The extension should now be installed and visible in your toolbar.
 
 ## ⚙️ Setup
 
