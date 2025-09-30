@@ -31,7 +31,7 @@ GitLines seamlessly integrates with GitHub's interface to provide instant code s
 
 ### Step 1: Install the Extension
 
-#### Option A: Install from Firefox Add-ons Store (Recommended)
+#### Option A: -- COMMING SOON! -- Install from Firefox Add-ons Store (Recommended)
 1. Visit the [GitLines Add-on page](https://addons.mozilla.org/firefox/addon/gitlines/)
 2. Click "Add to Firefox"
 3. Follow the prompts to complete installation
