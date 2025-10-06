@@ -61,7 +61,6 @@ A personal access token is required to access GitHub's API:
 4. Give your token a descriptive name (e.g., "GitLines Extension")
 5. Set the expiration as desired
 6. Select the following permissions:
-   - `public_repo` - For public repositories
    - `repo` - For private repositories (if needed)
 7. Click **Generate token**
 8. **IMPORTANT**: Copy the token immediately - you won't see it again!
