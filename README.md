@@ -56,8 +56,8 @@ GitLines seamlessly integrates with GitHub's interface to provide instant code s
 A personal access token is required to access GitHub's API:
 
 1. Sign in to [GitHub](https://github.com)
-2. Click your profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)**
-3. Click **Generate new token** → **Generate new token (classic)**
+2. Click your profile picture → **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** (or just go to https://github.com/settings/tokens)
+3. Click **Generate new token** → **Generate new token (classic)**  
 4. Give your token a descriptive name (e.g., "GitLines Extension")
 5. Set the expiration as desired
 6. Select the following permissions:
